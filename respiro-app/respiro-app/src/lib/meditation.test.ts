@@ -3,9 +3,9 @@ import { meditations } from "../data/meditations";
 import { estimateMinutes, estimateSeconds, toSSML } from "./meditation";
 
 describe("libreria meditazioni", () => {
-  it("contiene 25 meditazioni con id univoci", () => {
-    expect(meditations).toHaveLength(25);
-    expect(new Set(meditations.map((m) => m.id)).size).toBe(25);
+  it("ha almeno 40 meditazioni, tutte con id univoci", () => {
+    expect(meditations.length).toBeGreaterThanOrEqual(40);
+    expect(new Set(meditations.map((m) => m.id)).size).toBe(meditations.length);
   });
 
   it("ogni meditazione ha testi non vuoti e pause valide", () => {
@@ -19,19 +19,44 @@ describe("libreria meditazioni", () => {
     }
   });
 
-  it("le cinque meditazioni lunghe durano circa 10 minuti a velocità 0,85", () => {
-    const long = ["scansione-completa", "respiro-dieci-minuti", "sonno-profondo", "presenza-aperta", "passeggiata-bosco"];
-    for (const id of long) {
-      const m = meditations.find((x) => x.id === id)!;
-      const s = estimateSeconds(m, 0.85);
-      expect(s).toBeGreaterThan(570);
-      expect(s).toBeLessThan(630);
-      expect(estimateMinutes(m, 0.85)).toBe(10);
+  const durate = (ids: string[], min: number, max: number, minuti: number) => {
+    for (const id of ids) {
+      const m = meditations.find((x) => x.id === id);
+      expect(m, `manca la meditazione ${id}`).toBeDefined();
+      const s = estimateSeconds(m!, 0.85);
+      expect(s, id).toBeGreaterThan(min);
+      expect(s, id).toBeLessThan(max);
+      expect(estimateMinutes(m!, 0.85), id).toBe(minuti);
     }
+  };
+
+  it("le meditazioni da 10 minuti durano circa 10 minuti a velocità 0,85", () => {
+    durate(
+      [
+        "scansione-completa", "respiro-dieci-minuti", "sonno-profondo", "presenza-aperta", "passeggiata-bosco",
+        "rilassamento-progressivo", "gentilezza-cinque-cerchi", "la-montagna", "espirazione-lunga", "rain-emozione",
+      ],
+      570,
+      630,
+      10,
+    );
+  });
+
+  it("le meditazioni da 20 minuti durano circa 20 minuti a velocità 0,85", () => {
+    durate(
+      [
+        "scansione-corpo-20", "yoga-nidra", "respiro-quattro-tappe", "gentilezza-completa", "seduti-in-silenzio",
+        "discesa-nel-sonno", "il-lago", "compassione-respirare-insieme", "camminata-lunga", "calma-profonda-apnea",
+      ],
+      1140,
+      1260,
+      20,
+    );
   });
 
   it("le altre durano meno di 5 minuti", () => {
-    for (const m of meditations.filter((x) => estimateMinutes(x, 0.85) < 10)) {
+    const lunghe = estimateMinutes;
+    for (const m of meditations.filter((x) => lunghe(x, 0.85) < 10)) {
       expect(estimateSeconds(m, 0.85)).toBeLessThan(300);
     }
   });

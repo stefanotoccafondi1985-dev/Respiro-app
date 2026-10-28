@@ -3,19 +3,23 @@ import { Modal } from "../components/ui";
 import { meditations } from "../data/meditations";
 import { initAudio, beep } from "../lib/audio";
 import { estimateMinutes, toSSML } from "../lib/meditation";
-import { italianVoices, speak, speechSupported, stopSpeaking } from "../lib/narrator";
+import { loadItalianVoices, speak, speechSupported, stopSpeaking, type VoiceInfo } from "../lib/narrator";
 import { updateSettings, useStore } from "../store";
 import type { Meditation } from "../types";
 import { MeditationPlayer } from "./MeditationPlayer";
 
-export function useItalianVoices(): SpeechSynthesisVoice[] {
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>(() => italianVoices());
+export function useItalianVoices(): VoiceInfo[] {
+  const [voices, setVoices] = useState<VoiceInfo[]>([]);
   useEffect(() => {
-    if (!speechSupported()) return;
-    const update = () => setVoices(italianVoices());
+    let alive = true;
+    const update = () => void loadItalianVoices().then((v) => alive && setVoices(v));
     update();
-    speechSynthesis.addEventListener("voiceschanged", update);
-    return () => speechSynthesis.removeEventListener("voiceschanged", update);
+    // sul browser l'elenco delle voci arriva in ritardo
+    if ("speechSynthesis" in window) speechSynthesis.addEventListener("voiceschanged", update);
+    return () => {
+      alive = false;
+      if ("speechSynthesis" in window) speechSynthesis.removeEventListener("voiceschanged", update);
+    };
   }, []);
   return voices;
 }
@@ -73,10 +77,15 @@ export function VoiceCard() {
 export function Meditations() {
   const { settings } = useStore();
   const [cat, setCat] = useState("Tutte");
+  const [len, setLen] = useState<"all" | "short" | "10" | "20">("all");
   const [playing, setPlaying] = useState<Meditation | null>(null);
   const [ssml, setSsml] = useState<Meditation | null>(null);
   const cats = useMemo(() => ["Tutte", ...Array.from(new Set(meditations.map((m) => m.category)))], []);
-  const list = meditations.filter((m) => cat === "Tutte" || m.category === cat);
+  const inLength = (m: Meditation) => {
+    const min = estimateMinutes(m, settings.rate);
+    return len === "all" || (len === "short" && min <= 5) || (len === "10" && min > 5 && min < 15) || (len === "20" && min >= 15);
+  };
+  const list = meditations.filter((m) => (cat === "Tutte" || m.category === cat) && inLength(m));
 
   if (playing) return <MeditationPlayer meditation={playing} onClose={() => setPlaying(null)} />;
 
@@ -91,6 +100,21 @@ export function Meditations() {
           </button>
         ))}
       </div>
+      <div className="chips" role="group" aria-label="Durata">
+        {(
+          [
+            ["all", "Tutte le durate"],
+            ["short", "Brevi (2-5 min)"],
+            ["10", "10 min"],
+            ["20", "20 min"],
+          ] as const
+        ).map(([v, label]) => (
+          <button key={v} className="chip" aria-pressed={len === v} onClick={() => setLen(v)}>
+            {label}
+          </button>
+        ))}
+      </div>
+      {list.length === 0 && <p className="empty">Nessuna meditazione con questi filtri.</p>}
       <div className="list">
         {list.map((m) => (
           <div key={m.id} className="med">
