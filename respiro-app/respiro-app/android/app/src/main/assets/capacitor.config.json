@@ -1,0 +1,8 @@
+{
+	"appId": "it.respiro.app",
+	"appName": "Respiro",
+	"webDir": "dist",
+	"android": {
+		"backgroundColor": "#0A131A"
+	}
+}
