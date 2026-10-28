@@ -31,7 +31,9 @@ export function Pranayama() {
     if (t.kind === "rhythm" && t.rhythm) {
       setPlan({ mode: "rhythm", title: t.name, cueMode: "tone", ...t.rhythm });
     } else if (t.phases) {
-      setSetup({ title: t.name, phases: [...t.phases] as Phases, minutes: t.minutes ?? 5, cycles: t.cycles, nostril: t.nostril });
+      const len = t.phases.reduce((a, b) => a + b, 0);
+      const minutes = t.minutes ?? (t.cycles ? Math.max(1, Math.round((t.cycles * len) / 60)) : 5);
+      setSetup({ title: t.name, phases: [...t.phases] as Phases, minutes, cycles: t.cycles, nostril: t.nostril });
     }
   };
 
@@ -82,9 +84,14 @@ function SetupDialog({ setup, onCancel, onStart }: { setup: Setup; onCancel: () 
   const [minutes, setMinutes] = useState(setup.minutes);
   const [cueMode, setCueMode] = useState<CueMode>("tone");
   const [name, setName] = useState("");
+  // il numero fisso di cicli (es. 4-7-8) vale solo finché non cambi durata o fasi
+  const [custom, setCustom] = useState(false);
   const cycleLen = phases.reduce((a, b) => a + b, 0);
-  const cycles = setup.cycles && minutes === setup.minutes ? setup.cycles : Math.max(1, Math.floor((minutes * 60) / Math.max(1, cycleLen)));
-  const setPhase = (i: number, v: number) => setPhases((p) => p.map((x, j) => (j === i ? v : x)) as Phases);
+  const cycles = setup.cycles && !custom ? setup.cycles : Math.max(1, Math.floor((minutes * 60) / Math.max(1, cycleLen)));
+  const setPhase = (i: number, v: number) => {
+    setCustom(true);
+    setPhases((p) => p.map((x, j) => (j === i ? v : x)) as Phases);
+  };
   const valid = phases[0] > 0 && phases[2] > 0;
 
   return (
@@ -109,7 +116,11 @@ function SetupDialog({ setup, onCancel, onStart }: { setup: Setup; onCancel: () 
       {phases.map((v, i) => (
         <Stepper key={i} label={LABELS[i]} value={v} min={0} max={20} step={0.5} format={(x) => `${x} s`} onChange={(x) => setPhase(i, x)} />
       ))}
-      <Stepper label="Durata" value={minutes} min={1} max={30} step={1} format={(x) => `${x} min`} onChange={setMinutes} />
+      <Stepper label="Durata" value={minutes} min={1} max={30} step={1} format={(x) => `${x} min`} onChange={(x) => {
+          setCustom(true);
+          setMinutes(x);
+        }}
+      />
       <p className="hint">Circa {cycles} cicli da {cycleLen} s.</p>
       <div className="field">
         <label>Segnali</label>
