@@ -1,4 +1,6 @@
+import { Haptics } from "@capacitor/haptics";
 import { getState } from "../store";
+import { isNative } from "./platform";
 
 let ctx: AudioContext | null = null;
 
@@ -36,9 +38,15 @@ export function beep(freq: number, dur = 0.15) {
   }
 }
 
-export function vibrate(ms: number | number[]) {
+/** Vibrazione: nativa nell'app Android, Vibration API nel browser (non disponibile su iPhone). */
+export function vibrate(ms: number) {
+  if (!getState().settings.vibration) return;
   try {
-    if (getState().settings.vibration && "vibrate" in navigator) navigator.vibrate(ms);
+    if (isNative()) {
+      void Haptics.vibrate({ duration: Math.max(10, ms) }).catch(() => undefined);
+    } else if ("vibrate" in navigator) {
+      navigator.vibrate(ms);
+    }
   } catch {
     /* ignora */
   }

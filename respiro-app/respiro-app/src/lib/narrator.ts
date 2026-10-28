@@ -1,21 +1,47 @@
+import { TextToSpeech } from "@capacitor-community/text-to-speech";
 import type { Segment } from "../types";
 import { wordCount } from "./meditation";
+import { isNative } from "./platform";
 
-export const speechSupported = () => typeof window !== "undefined" && "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
-
-/** Voci italiane del dispositivo, con le più naturali in cima. */
-export function italianVoices(): SpeechSynthesisVoice[] {
-  if (!speechSupported()) return [];
-  const pref = /natural|neural|premium|enhanced|alice|elsa|federica|luca|google/i;
-  return speechSynthesis
-    .getVoices()
-    .filter((v) => /^it/i.test(v.lang))
-    .sort((a, b) => Number(pref.test(b.name)) - Number(pref.test(a.name)));
+export interface VoiceInfo {
+  voiceURI: string;
+  name: string;
+  lang: string;
+  /** Posizione nell'elenco delle voci del dispositivo (solo app nativa). */
+  nativeIndex?: number;
 }
 
-function pickVoice(uri: string | null): SpeechSynthesisVoice | undefined {
-  const list = italianVoices();
-  return list.find((v) => v.voiceURI === uri) ?? list[0];
+const webSpeech = () => typeof window !== "undefined" && "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+
+/** Nell'app Android la voce è quella nativa del telefono, più affidabile di quella del browser. */
+export const speechSupported = () => isNative() || webSpeech();
+
+const PREFERRED = /natural|neural|premium|enhanced|alice|elsa|federica|luca|google/i;
+const byQuality = (a: VoiceInfo, b: VoiceInfo) => Number(PREFERRED.test(b.name)) - Number(PREFERRED.test(a.name));
+
+let nativeVoices: VoiceInfo[] = [];
+
+/** Voci italiane disponibili, con le più naturali in cima. */
+export async function loadItalianVoices(): Promise<VoiceInfo[]> {
+  try {
+    if (isNative()) {
+      const { voices } = await TextToSpeech.getSupportedVoices();
+      nativeVoices = voices
+        .map((v, i) => ({ voiceURI: v.voiceURI, name: v.name, lang: v.lang, nativeIndex: i }))
+        .filter((v) => /^it/i.test(v.lang.replace("_", "-")));
+      return [...nativeVoices].sort(byQuality);
+    }
+    if (webSpeech()) {
+      return speechSynthesis
+        .getVoices()
+        .filter((v) => /^it/i.test(v.lang))
+        .map((v) => ({ voiceURI: v.voiceURI, name: v.name, lang: v.lang }))
+        .sort(byQuality);
+    }
+  } catch {
+    /* ignora */
+  }
+  return [];
 }
 
 export interface SpeakOpts {
@@ -26,17 +52,6 @@ export interface SpeakOpts {
 
 /** Legge un testo; chiama done() alla fine (o se la sintesi si interrompe per errore). */
 export function speak(text: string, o: SpeakOpts, done?: () => void) {
-  if (!speechSupported()) {
-    done?.();
-    return;
-  }
-  const u = new SpeechSynthesisUtterance(text);
-  const v = pickVoice(o.voiceURI);
-  u.lang = v?.lang ?? "it-IT";
-  if (v) u.voice = v;
-  u.rate = o.rate;
-  u.pitch = 0.95;
-  u.volume = o.volume ?? 1;
   let fired = false;
   const fin = () => {
     if (!fired) {
@@ -44,6 +59,31 @@ export function speak(text: string, o: SpeakOpts, done?: () => void) {
       done?.();
     }
   };
+
+  if (isNative()) {
+    const v = nativeVoices.find((x) => x.voiceURI === o.voiceURI) ?? nativeVoices[0];
+    TextToSpeech.speak({
+      text,
+      lang: v?.lang.replace("_", "-") ?? "it-IT",
+      rate: o.rate,
+      pitch: 0.95,
+      volume: o.volume ?? 1,
+      voice: v?.nativeIndex,
+    })
+      .then(fin)
+      .catch(fin);
+    return;
+  }
+
+  if (!webSpeech()) return fin();
+  const u = new SpeechSynthesisUtterance(text);
+  const wv = speechSynthesis.getVoices().filter((v) => /^it/i.test(v.lang));
+  const v = wv.find((x) => x.voiceURI === o.voiceURI) ?? wv[0];
+  u.lang = v?.lang ?? "it-IT";
+  if (v) u.voice = v;
+  u.rate = o.rate;
+  u.pitch = 0.95;
+  u.volume = o.volume ?? 1;
   u.onend = fin;
   u.onerror = (e) => {
     if (e.error === "canceled" || e.error === "interrupted") return;
@@ -53,12 +93,11 @@ export function speak(text: string, o: SpeakOpts, done?: () => void) {
 }
 
 export function stopSpeaking() {
-  if (speechSupported()) {
-    try {
-      speechSynthesis.cancel();
-    } catch {
-      /* ignora */
-    }
+  try {
+    if (isNative()) void TextToSpeech.stop().catch(() => undefined);
+    else if (webSpeech()) speechSynthesis.cancel();
+  } catch {
+    /* ignora */
   }
 }
 
@@ -69,7 +108,7 @@ export interface NarratorEvents {
 
 /**
  * Legge una meditazione segmento per segmento: parla, aspetta la pausa, passa al successivo.
- * Le attese usano orari assoluti. Se l'evento "end" della sintesi non arriva mai
+ * Le attese usano orari assoluti. Se la fine della sintesi non viene mai segnalata
  * (succede su alcuni telefoni), un timer di sicurezza fa proseguire comunque.
  */
 export class Narrator {
@@ -88,8 +127,9 @@ export class Narrator {
     private ev: NarratorEvents,
   ) {}
 
-  start() {
+  async start() {
     stopSpeaking();
+    if (isNative()) await loadItalianVoices(); // serve l'indice della voce scelta
     this.next();
   }
 

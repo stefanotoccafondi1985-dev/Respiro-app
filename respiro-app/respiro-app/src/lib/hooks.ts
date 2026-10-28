@@ -1,8 +1,14 @@
+import { KeepAwake } from "@capacitor-community/keep-awake";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { isNative } from "./platform";
 
 /** Tiene lo schermo acceso mentre il componente è visibile (se il browser lo permette). */
 export function useWakeLock() {
   useEffect(() => {
+    if (isNative()) {
+      void KeepAwake.keepAwake().catch(() => undefined);
+      return () => void KeepAwake.allowSleep().catch(() => undefined);
+    }
     let lock: WakeLockSentinel | null = null;
     let cancelled = false;
     const request = async () => {
