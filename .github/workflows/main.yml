@@ -20,11 +20,21 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: respiro-app/respiro-app
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: respiro-app/respiro-app/package-lock.json
+      - run: npm ci
+      - run: npx vite build --base=/Respiro-app/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: "respiro-app/respiro-app"
+          path: respiro-app/respiro-app/dist
       - id: deployment
         uses: actions/deploy-pages@v4
