@@ -149,6 +149,13 @@ td.hold { color: var(--hold); font-weight: 600; }
 .stage svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
 .orb { position: absolute; inset: 12%; border-radius: 50%; background: var(--rc, var(--accent)); opacity: 0.16; transition: background 0.3s; }
 .time { position: relative; font: 500 clamp(60px, 20vw, 92px) var(--font-num); font-variant-numeric: tabular-nums; line-height: 1; }
+.shape { width: min(78vw, 38vh, 320px); aspect-ratio: 1; }
+.nose + .shape { width: min(70vw, 31vh, 280px); }
+.shape.small { width: 120px; margin: 4px auto 0; }
+.shape svg { width: 100%; height: 100%; display: block; }
+.nose { width: min(44vw, 20vh, 170px); }
+.nose svg { width: 100%; display: block; }
+.time.small { font-size: clamp(40px, 12vw, 58px); }
 .phase { font-size: 22px; font-weight: 700; margin-top: 6px; }
 .next { color: var(--muted); font-size: 14px; min-height: 21px; }
 .gorb { width: min(52vw, 200px); aspect-ratio: 1; border-radius: 50%; background: var(--accent); opacity: 0.18; animation: breathe 8s ease-in-out infinite; }
