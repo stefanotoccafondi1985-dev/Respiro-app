@@ -1,3 +1,5 @@
+import { meditations } from "../data/meditations";
+import { APP_VERSION, buildLabel } from "../version";
 import { CoachOptions } from "../components/CoachOptions";
 import { useState } from "react";
 import { Modal, Seg } from "../components/ui";
@@ -86,6 +88,17 @@ export function Settings({ onClose }: { onClose: () => void }) {
           <button className="btn danger" onClick={() => setConfirm(true)}>
             Cancella tutti i dati
           </button>
+        </section>
+
+        <section className="card">
+          <h2>Informazioni</h2>
+          <p className="hint">
+            Versione <b>{APP_VERSION}</b>
+            {buildLabel() && <> · compilata il {buildLabel()}</>}
+            <br />
+            {meditations.length} meditazioni guidate.
+          </p>
+          <p className="hint">Se dopo un aggiornamento qui vedi ancora la data vecchia, chiudi l'app del tutto e riaprila due volte.</p>
         </section>
       </div>
 
