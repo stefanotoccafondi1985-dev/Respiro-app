@@ -34,17 +34,42 @@ describe("figura del respiro", () => {
     }
   });
 
-  it("inspirando il punto sale, espirando scende, nelle pause resta alla stessa altezza", () => {
+  it("il triangolo è equilatero, con la base in basso e il vertice in alto", () => {
+    for (const p of [[4, 7, 8, 0], [4, 0, 4, 4]] as Phases[]) {
+      const s = buildShape(p);
+      const len = (i: number) => Math.hypot(s.sides[i].to.x - s.sides[i].from.x, s.sides[i].to.y - s.sides[i].from.y);
+      expect(len(0)).toBeCloseTo(len(1), 0);
+      expect(len(1)).toBeCloseTo(len(2), 0);
+      const ys = s.sides.map((x) => x.from.y);
+      const base = s.sides.find((x) => x.from.y === x.to.y)!;
+      expect(base.from.y).toBe(Math.max(...ys));
+      expect(Math.min(...ys)).toBeLessThan(base.from.y);
+      expect(s.sides.filter((x) => x.from.y === x.to.y)).toHaveLength(1);
+    }
+  });
+
+  it("pausa a polmoni pieni: l'espirazione è la base. Pausa a polmoni vuoti: l'espirazione è un lato inclinato", () => {
+    const piena = buildShape([4, 7, 8, 0]);
+    const espPiena = piena.sides.find((x) => x.phase === 2)!;
+    expect(espPiena.from.y).toBe(espPiena.to.y);
+    const vuota = buildShape([4, 0, 4, 4]);
+    const espVuota = vuota.sides.find((x) => x.phase === 2)!;
+    expect(espVuota.from.y).not.toBe(espVuota.to.y);
+    const pausaVuota = vuota.sides.find((x) => x.phase === 3)!;
+    expect(pausaVuota.from.y).toBe(pausaVuota.to.y);
+  });
+
+  it("inspirando il punto sale, e espirando non sale mai (linea, triangolo, quadrato)", () => {
     for (const p of [[4, 0, 6, 0], [4, 7, 8, 0], [4, 0, 4, 4], [4, 4, 4, 4]] as Phases[]) {
       const s = buildShape(p);
       expect(dotPosition(s, "in", 1).y).toBeLessThan(dotPosition(s, "in", 0).y);
-      expect(dotPosition(s, "out", 1).y).toBeGreaterThan(dotPosition(s, "out", 0).y);
-      for (const k of ["h1", "h2"]) {
-        if (s.sides.some((x) => x.phase === (k === "h1" ? 1 : 3))) {
-          expect(dotPosition(s, k, 0).y).toBeCloseTo(dotPosition(s, k, 1).y);
-        }
-      }
+      expect(dotPosition(s, "out", 1).y).toBeGreaterThanOrEqual(dotPosition(s, "out", 0).y);
     }
+  });
+
+  it("nel quadrato le pause sono lati orizzontali", () => {
+    const s = buildShape([4, 4, 4, 4]);
+    for (const k of ["h1", "h2"]) expect(dotPosition(s, k, 0).y).toBeCloseTo(dotPosition(s, k, 1).y);
   });
 
   it("il punto va dall'inizio alla fine del lato e non esce mai dal lato", () => {

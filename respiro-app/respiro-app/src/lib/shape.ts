@@ -60,8 +60,8 @@ function make(kind: ShapeKind, phases: Phases, route: [Pt, Pt][], ids: (0 | 1 | 
 /**
  * Sceglie la figura dal numero di fasi con durata maggiore di zero:
  * 2 fasi = linea, 3 = triangolo, 4 = quadrato.
- * Su ogni figura salire significa riempire i polmoni, scendere svuotarli,
- * un lato orizzontale è una pausa.
+ * Nella linea e nel quadrato salire significa riempire i polmoni, scendere svuotarli,
+ * un lato orizzontale è una pausa. Il triangolo è sempre equilatero.
  */
 export function buildShape(phases: Phases): Shape {
   const [, h1, , h2] = phases;
@@ -69,16 +69,15 @@ export function buildShape(phases: Phases): Shape {
     // quadrato: su, pausa in alto, giù, pausa in basso
     return make("square", phases, [[BL, TL], [TL, TR], [TR, BR], [BR, BL]], [0, 1, 2, 3]);
   }
-  if (h1 > 0) {
-    // triangolo rettangolo: su, pausa in alto, giù in diagonale
-    return make("triangle", phases, [[BL, TL], [TL, TR], [TR, BL]], [0, 1, 2]);
-  }
-  if (h2 > 0) {
-    // triangolo isoscele: su in diagonale, giù in diagonale, pausa in basso
-    const A: Pt = { x: 45, y: 155 };
-    const B: Pt = { x: 100, y: 45 };
-    const C: Pt = { x: 155, y: 155 };
-    return make("triangle", phases, [[A, B], [B, C], [C, A]], [0, 2, 3]);
+  if (h1 > 0 || h2 > 0) {
+    // triangolo equilatero, base in basso e vertice in alto: il punto parte dall'angolo
+    // in basso a sinistra e gira in senso orario. L'inspirazione è sempre il lato sinistro.
+    // Pausa a polmoni pieni:  su (inspira), lato destro (pausa), base (espira).
+    // Pausa a polmoni vuoti:  su (inspira), lato destro (espira), base (pausa).
+    const A: Pt = { x: 40, y: 152 };
+    const B: Pt = { x: 100, y: 48 };
+    const C: Pt = { x: 160, y: 152 };
+    return make("triangle", phases, [[A, B], [B, C], [C, A]], h1 > 0 ? [0, 1, 2] : [0, 2, 3]);
   }
   // linea verticale: si sale inspirando, si scende espirando
   const bottom: Pt = { x: 100, y: 155 };
