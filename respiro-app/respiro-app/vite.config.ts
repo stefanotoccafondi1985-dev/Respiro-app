@@ -6,6 +6,7 @@ import { VitePWA } from "vite-plugin-pwa";
 // In locale resta "/".
 export default defineConfig({
   base: process.env.BASE_PATH ?? "/",
+  define: { __BUILD_TIME__: JSON.stringify(new Date().toISOString()) },
   plugins: [
     react(),
     VitePWA({
