@@ -1,35 +1,20 @@
 :root {
-  --bg: #edf2f4;
-  --surface: #ffffff;
-  --fg: #0e1c25;
-  --muted: #586873;
-  --line: #d3dde2;
-  --accent: #0c7480;
-  --accent-fg: #ffffff;
-  --hold: #5a47d1;
-  --warn: #9a4a06;
-  --warn-bg: #fbf1e3;
-  --track: #dce5e9;
+  /* tema scuro sempre attivo, indipendente dall'impostazione del telefono o del browser */
+  --bg: #0a131a;
+  --surface: #121e27;
+  --fg: #e5edf1;
+  --muted: #8c9eaa;
+  --line: #21313c;
+  --accent: #5cd1c8;
+  --accent-fg: #062a2d;
+  --hold: #aba2ff;
+  --warn: #f2b35e;
+  --warn-bg: #251c10;
+  --track: #1c2b35;
   --scrim: rgba(5, 10, 14, 0.6);
   --font-body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-num: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0a131a;
-    --surface: #121e27;
-    --fg: #e5edf1;
-    --muted: #8c9eaa;
-    --line: #21313c;
-    --accent: #5cd1c8;
-    --accent-fg: #062a2d;
-    --hold: #aba2ff;
-    --warn: #f2b35e;
-    --warn-bg: #251c10;
-    --track: #1c2b35;
-    color-scheme: dark;
-  }
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }

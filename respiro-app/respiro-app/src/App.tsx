@@ -13,8 +13,8 @@ type Tab = "home" | "apnea" | "respira" | "storico";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "home", label: "Home" },
-  { id: "apnea", label: "Apnea" },
   { id: "respira", label: "Respira" },
+  { id: "apnea", label: "Apnea" },
   { id: "storico", label: "Storico" },
 ];
 
