@@ -89,7 +89,7 @@ export function CoachOptions() {
           </button>
         )}
       </div>
-      <p className="hint">Le frasi usano la voce scelta in Respira, Meditazioni. Puoi sempre respirare quando vuoi, a prescindere dai suggerimenti.</p>
+      <p className="hint">Le frasi usano la voce scelta in Respira, Audiomeditazioni. Puoi sempre respirare quando vuoi, a prescindere dai suggerimenti.</p>
     </fieldset>
   );
 }
