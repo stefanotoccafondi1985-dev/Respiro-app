@@ -2,6 +2,7 @@ import { useState } from "react";
 import { addSession } from "../store";
 import type { SessionRecord } from "../types";
 import { fmt, uid } from "../lib/format";
+import { CoachOptions } from "./CoachOptions";
 import { Modal } from "./ui";
 
 export const SAFETY_RULES = [
@@ -35,6 +36,7 @@ export function SafetyReminder({ onConfirm, onCancel }: { onConfirm: () => void;
         <li>Respira in modo calmo, senza iperventilare.</li>
         <li>Il pulsante Respira chiude l'apnea in qualsiasi momento.</li>
       </ul>
+      <CoachOptions />
     </Modal>
   );
 }
