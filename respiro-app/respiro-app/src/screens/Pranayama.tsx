@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CautionModal } from "../components/Dialogs";
+import { ShapePreview } from "../components/BreathShape";
 import { Modal, Seg, Stepper } from "../components/ui";
 import { techniques, type Phases, type Technique } from "../data/pranayama";
 import { uid } from "../lib/format";
@@ -121,6 +122,7 @@ function SetupDialog({ setup, onCancel, onStart }: { setup: Setup; onCancel: () 
           setMinutes(x);
         }}
       />
+      <ShapePreview phases={phases} />
       <p className="hint">Circa {cycles} cicli da {cycleLen} s.</p>
       <div className="field">
         <label>Segnali</label>

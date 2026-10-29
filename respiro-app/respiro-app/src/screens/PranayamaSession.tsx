@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Summary, type Result } from "../components/Dialogs";
+import { BreathShape, Nose } from "../components/BreathShape";
 import { Ring } from "../components/ui";
 import { cue, initAudio, vibrate } from "../lib/audio";
 import { fmt } from "../lib/format";
 import { useRunner, useWakeLock, type Step } from "../lib/hooks";
 import { speak, stopSpeaking } from "../lib/narrator";
+import { nostrilText } from "../lib/shape";
 import { getState } from "../store";
 import type { Phases } from "../data/pranayama";
 
@@ -33,13 +35,6 @@ function buildSteps(plan: SessionPlan): Step[] {
     }
   }
   return s;
-}
-
-function nostrilHint(kind: string, cycle: number): string {
-  const odd = cycle % 2 === 1;
-  if (kind === "in") return odd ? "Inspira dalla narice sinistra" : "Inspira dalla narice destra";
-  if (kind === "out") return odd ? "Espira dalla narice destra" : "Espira dalla narice sinistra";
-  return "Chiudi entrambe le narici";
 }
 
 export function PranayamaSession({ plan, onClose }: { plan: SessionPlan; onClose: () => void }) {
@@ -95,7 +90,7 @@ export function PranayamaSession({ plan, onClose }: { plan: SessionPlan; onClose
   const st = r.step;
   const scale =
     st.kind === "in" ? 0.5 + 0.5 * r.progress : st.kind === "out" ? 1 - 0.5 * r.progress : st.kind === "h1" ? 1 : st.kind === "beat" ? 0.75 + 0.25 * ((beatNo % 2 === 0) ? 1 : 0) : 0.5;
-  const hint = plan.mode === "phases" && plan.nostril && st.round ? nostrilHint(st.kind, st.round) : "";
+  const hint = plan.mode === "phases" && plan.nostril && st.round ? nostrilText(st.kind, st.round) : "";
   const sec = Math.ceil(r.remaining);
   const beatsLeft = plan.mode === "rhythm" && st.kind === "beat" ? plan.strokes - Math.min(plan.strokes, beatNo + 1) : null;
 
@@ -106,13 +101,28 @@ export function PranayamaSession({ plan, onClose }: { plan: SessionPlan; onClose
         <span>{st.round ? `${plan.mode === "phases" ? "Ciclo" : "Round"} ${st.round}/${total}` : ""}</span>
       </div>
       <div className="mid">
-        <Ring progress={r.progress} color="var(--accent)">
-          <div
-            className="orb"
-            style={{ transform: `scale(${0.6 + 0.4 * scale})`, opacity: 0.12 + 0.22 * scale, transition: "none" }}
-          />
-          <div className="time">{beatsLeft !== null ? beatsLeft : fmt(sec)}</div>
-        </Ring>
+        {plan.mode === "phases" ? (
+          <>
+            {plan.nostril && <Nose kind={st.kind} cycle={st.round ?? 1} />}
+            <BreathShape
+              phases={plan.phases}
+              steps={r.steps}
+              starts={r.starts}
+              ends={r.ends}
+              getElapsed={r.getElapsed}
+              activeKind={st.kind}
+            />
+            <div className="time small">{fmt(sec)}</div>
+          </>
+        ) : (
+          <Ring progress={r.progress} color="var(--accent)">
+            <div
+              className="orb"
+              style={{ transform: `scale(${0.6 + 0.4 * scale})`, opacity: 0.12 + 0.22 * scale, transition: "none" }}
+            />
+            <div className="time">{beatsLeft !== null ? beatsLeft : fmt(sec)}</div>
+          </Ring>
+        )}
         <div className="phase" aria-live="polite">
           {st.label}
         </div>
