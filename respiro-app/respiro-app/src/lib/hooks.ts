@@ -88,6 +88,8 @@ export function useRunner(steps: Step[]) {
     remaining,
     progress,
     finished,
+    /** Tempo trascorso in questo istante (per animazioni fluide fuori da React). */
+    getElapsed: () => Math.min(elapsedNow(), total),
     paused: pausedAt.current !== null,
     pause() {
       if (pausedAt.current === null) {
