@@ -6,7 +6,7 @@ const KEY = "respiro:v1";
 const defaults: AppState = {
   version: 1,
   profile: { onboarded: false, safetyAcceptedAt: null, level: "intermediate", pb: null, pbHistory: [] },
-  settings: { sound: true, volume: 0.7, vibration: true, holdCue30: false, voiceURI: null, rate: 0.85 },
+  settings: { sound: true, volume: 0.7, vibration: true, coachGong: false, coachPhrases: false, coachMusic: "off", coachMusicVolume: 0.5, voiceURI: null, rate: 0.85 },
   sessions: [],
   customPresets: [],
 };
@@ -14,10 +14,13 @@ const defaults: AppState = {
 /** Unisce i dati salvati ai valori predefiniti: un punto unico dove aggiungere future migrazioni. */
 function migrate(raw: unknown): AppState {
   const p = (raw ?? {}) as Partial<AppState>;
+  // la vecchia opzione "avviso ogni 30 s" diventa il gong del coach
+  const old = (p.settings ?? {}) as { holdCue30?: boolean; coachGong?: boolean };
+  const carried = old.coachGong === undefined && old.holdCue30 ? { coachGong: true } : {};
   return {
     version: 1,
     profile: { ...defaults.profile, ...(p.profile ?? {}) },
-    settings: { ...defaults.settings, ...(p.settings ?? {}) },
+    settings: { ...defaults.settings, ...(p.settings ?? {}), ...carried },
     sessions: Array.isArray(p.sessions) ? p.sessions : [],
     customPresets: Array.isArray(p.customPresets) ? p.customPresets : [],
   };

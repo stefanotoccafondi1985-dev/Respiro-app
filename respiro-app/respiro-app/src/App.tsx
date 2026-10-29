@@ -27,7 +27,7 @@ export default function App() {
   const [onboardingTest, setOnboardingTest] = useState(false);
 
   if (!profile.onboarded) return <Onboarding onTest={() => setOnboardingTest(true)} />;
-  if (onboardingTest) return <TestSession onClose={() => setOnboardingTest(false)} />;
+  if (onboardingTest) return <TestSession showCoach onClose={() => setOnboardingTest(false)} />;
   if (settings) return <Settings onClose={() => setSettings(false)} />;
 
   const go: Nav["go"] = (t, opts) => {

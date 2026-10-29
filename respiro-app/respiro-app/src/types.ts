@@ -23,11 +23,19 @@ export interface SessionRecord {
   testSeconds?: number;
 }
 
+export type CoachMusic = "off" | "brown" | "pad";
+
 export interface Settings {
   sound: boolean;
   volume: number; // 0-1
   vibration: boolean;
-  holdCue30: boolean;
+  /** Coach in apnea: gong ogni 30 s di apnea. */
+  coachGong: boolean;
+  /** Coach in apnea: frasi di incoraggiamento lette dalla voce. */
+  coachPhrases: boolean;
+  /** Coach in apnea: sottofondo. */
+  coachMusic: CoachMusic;
+  coachMusicVolume: number; // 0-1
   voiceURI: string | null;
   rate: number; // 0.7-1
 }
