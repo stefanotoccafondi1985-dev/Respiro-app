@@ -16,6 +16,9 @@ export function initAudio() {
   }
 }
 
+/** Contesto audio condiviso (null se il browser non lo supporta o prima del primo tocco). */
+export const getCtx = () => ctx;
+
 /** Tono sinusoidale generato al volo: nessun file audio necessario. */
 export function beep(freq: number, dur = 0.15) {
   const { sound, volume } = getState().settings;
