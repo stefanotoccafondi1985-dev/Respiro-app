@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Summary, type Result } from "../components/Dialogs";
 import { Ring } from "../components/ui";
-import { beep, cue, initAudio } from "../lib/audio";
+import { buildTableCoach } from "../lib/coach";
+import { cue, initAudio } from "../lib/audio";
 import { fmt } from "../lib/format";
 import { useRunner, useWakeLock, type Step } from "../lib/hooks";
-import { useStore } from "../store";
+import { useCoach } from "../lib/useCoach";
+import { getState } from "../store";
 import type { Row, TableType } from "../types";
 
 const NAMES: Record<string, string> = { prep: "Preparati", rec: "Recupero", hold: "Apnea", cool: "Defaticamento" };
@@ -26,7 +28,6 @@ function buildSteps(rows: Row[]): Step[] {
 export function TableSession({ type, rows, onClose }: { type: TableType; rows: Row[]; onClose: () => void }) {
   const steps = useMemo(() => buildSteps(rows), [rows]);
   const r = useRunner(steps);
-  const { settings } = useStore();
   useWakeLock();
   const interrupted = useRef(new Set<number>());
   const startedAt = useRef(new Date().toISOString());
@@ -77,12 +78,12 @@ export function TableSession({ type, rows, onClose }: { type: TableType; rows: R
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [r.index, sec]);
 
-  // avviso facoltativo ogni 30 s durante l'apnea
-  const inPhase = Math.floor(r.elapsed - (r.starts[r.index] ?? 0));
-  useEffect(() => {
-    if (settings.holdCue30 && r.step?.kind === "hold" && inPhase > 0 && inPhase % 30 === 0) beep(440, 0.1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [r.index, inPhase]);
+  // gong, frasi e sottofondo scelti dall'utente
+  const events = useMemo(() => {
+    const { coachGong, coachPhrases } = getState().settings;
+    return buildTableCoach(steps, type, rows.length, { gong: coachGong, phrases: coachPhrases });
+  }, [steps, type, rows.length]);
+  useCoach(events, r.getElapsed, !summary && !r.finished);
 
   if (summary) return <Summary result={summary.result} manual={summary.manual} onClose={onClose} />;
   if (!r.step) return null;

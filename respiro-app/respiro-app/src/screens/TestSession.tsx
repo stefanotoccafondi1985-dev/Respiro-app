@@ -1,20 +1,25 @@
 import { useEffect, useRef, useState } from "react";
+import { CoachOptions } from "../components/CoachOptions";
 import { Modal } from "../components/ui";
+import { buildTestCoach, type CoachEvent } from "../lib/coach";
 import { cue, initAudio } from "../lib/audio";
 import { fmt, uid } from "../lib/format";
 import { useWakeLock } from "../lib/hooks";
-import { addSession, setPB } from "../store";
+import { useCoach } from "../lib/useCoach";
+import { addSession, getState, setPB } from "../store";
 
 type Phase = "intro" | "running" | "result";
 
 /** Test del massimo: cronometro in avanti. Il PB cambia solo se l'utente conferma. */
-export function TestSession({ onClose }: { onClose: () => void }) {
+export function TestSession({ onClose, showCoach = false }: { onClose: () => void; showCoach?: boolean }) {
   const [phase, setPhase] = useState<Phase>("intro");
   const [, force] = useState(0);
   const t0 = useRef(0);
   const [seconds, setSeconds] = useState(0);
   const startedAt = useRef("");
+  const [events, setEvents] = useState<CoachEvent[]>([]);
   useWakeLock();
+  useCoach(events, () => (performance.now() - t0.current) / 1000, phase === "running");
 
   useEffect(() => {
     if (phase !== "running") return;
@@ -27,6 +32,8 @@ export function TestSession({ onClose }: { onClose: () => void }) {
     t0.current = performance.now();
     startedAt.current = new Date().toISOString();
     cue(880, 150, 0.25);
+    const { coachGong, coachPhrases } = getState().settings;
+    setEvents(buildTestCoach(getState().profile.pb, { gong: coachGong, phrases: coachPhrases }));
     setPhase("running");
   };
   const stop = () => {
@@ -76,6 +83,7 @@ export function TestSession({ onClose }: { onClose: () => void }) {
             <li>Un respiro tranquillo, poi apnea fino a un chiaro bisogno di respirare.</li>
             <li>Tocca Respira: l'app ti mostra il tempo.</li>
           </ol>
+          {showCoach && <CoachOptions />}
         </div>
         <div className="ctl">
           <button className="btn big" onClick={start}>

@@ -1,3 +1,4 @@
+import { CoachOptions } from "../components/CoachOptions";
 import { useState } from "react";
 import { Modal, Seg } from "../components/ui";
 import { fmt } from "../lib/format";
@@ -68,11 +69,12 @@ export function Settings({ onClose }: { onClose: () => void }) {
             <input type="checkbox" checked={settings.vibration} onChange={(e) => updateSettings({ vibration: e.target.checked })} />
             Vibrazione (dove supportata)
           </label>
-          <label className="chk" style={{ color: "var(--fg)" }}>
-            <input type="checkbox" checked={settings.holdCue30} onChange={(e) => updateSettings({ holdCue30: e.target.checked })} />
-            Avviso ogni 30 s durante l'apnea
-          </label>
           <p className="hint">La voce e la velocità delle meditazioni si scelgono in Respira, sezione Meditazioni.</p>
+        </section>
+
+        <section className="card">
+          <h2>Apnea</h2>
+          <CoachOptions />
         </section>
 
         <section className="card">
