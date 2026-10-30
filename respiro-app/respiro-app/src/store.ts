@@ -9,6 +9,7 @@ const defaults: AppState = {
   settings: { sound: true, volume: 0.7, vibration: true, coachGong: false, coachPhrases: false, coachMusic: "off", coachMusicVolume: 0.5, meditationMusic: "off", meditationMusicVolume: 0.5, voiceURI: null, rate: 0.85 },
   sessions: [],
   customPresets: [],
+  course: { done: [] },
 };
 
 /** Unisce i dati salvati ai valori predefiniti: un punto unico dove aggiungere future migrazioni. */
@@ -23,6 +24,7 @@ function migrate(raw: unknown): AppState {
     settings: { ...defaults.settings, ...(p.settings ?? {}), ...carried },
     sessions: Array.isArray(p.sessions) ? p.sessions : [],
     customPresets: Array.isArray(p.customPresets) ? p.customPresets : [],
+    course: { done: Array.isArray(p.course?.done) ? p.course.done.filter((x): x is string => typeof x === "string") : [] },
   };
 }
 
@@ -80,6 +82,14 @@ export function setPB(seconds: number) {
 export const saveCustomPreset = (p: CustomPreset) => commit({ ...state, customPresets: [...state.customPresets, p] });
 export const deleteCustomPreset = (id: string) =>
   commit({ ...state, customPresets: state.customPresets.filter((p) => p.id !== id) });
+
+/** Segna una lezione del corso come completata (una volta sola). */
+export function markLessonDone(id: string) {
+  if (state.course.done.includes(id)) return;
+  commit({ ...state, course: { done: [...state.course.done, id] } });
+}
+
+export const resetCourse = () => commit({ ...state, course: { done: [] } });
 
 export const exportJson = () => JSON.stringify(state, null, 2);
 

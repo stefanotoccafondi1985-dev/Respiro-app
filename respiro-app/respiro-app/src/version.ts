@@ -1,5 +1,5 @@
 /** Numero di versione: cambialo a ogni aggiornamento importante. */
-export const APP_VERSION = "1.4.0";
+export const APP_VERSION = "1.5.0";
 
 /** Data e ora della compilazione, scritta da vite.config.ts. */
 export const BUILD_TIME: string = typeof __BUILD_TIME__ === "string" ? __BUILD_TIME__ : "";

@@ -183,3 +183,23 @@ td.hold { color: var(--hold); font-weight: 600; }
 .app > main { position: relative; }
 .app > nav { position: sticky; }
 @media (prefers-reduced-motion: reduce) { .bgart svg { animation: none; } }
+
+/* --- corso di meditazione --- */
+.flame { width: min(46vw, 190px); height: auto; overflow: visible; }
+.flame-fire { transform-origin: 80px 108px; animation: flicker 2.4s ease-in-out infinite; }
+@keyframes flicker {
+  0%, 100% { transform: scale(1, 1) rotate(0deg); }
+  20% { transform: scale(0.96, 1.04) rotate(-1.5deg); }
+  45% { transform: scale(1.03, 0.97) rotate(1deg); }
+  70% { transform: scale(0.98, 1.05) rotate(-0.8deg); }
+}
+.pulse-orb { width: min(44vw, 180px); aspect-ratio: 1; border-radius: 50%; background: var(--accent); opacity: 0.2; transform: scale(0.8); }
+.pulse-orb.beat { animation: beat 1.1s ease-out 1; }
+@keyframes beat { 0% { transform: scale(0.8); opacity: 0.55; } 100% { transform: scale(1.05); opacity: 0.18; } }
+.dark-view { width: 1px; height: min(44vw, 180px); }
+.gtext.dim { opacity: 0.3; }
+.item.lesson { align-items: flex-start; }
+.item.lesson .num { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font: 600 14px var(--font-num); color: var(--accent); }
+.item.lesson .num.done { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+.prep { margin: 0; padding-left: 20px; display: grid; gap: 4px; color: var(--muted); font-size: 14px; }
+@media (prefers-reduced-motion: reduce) { .flame-fire, .pulse-orb.beat { animation: none; } }

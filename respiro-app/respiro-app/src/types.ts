@@ -58,16 +58,22 @@ export interface CustomPreset {
   minutes: number;
 }
 
+/** Avanzamento del corso di meditazione. */
+export interface CourseState {
+  done: string[];
+}
+
 export interface AppState {
   version: 1;
   profile: Profile;
   settings: Settings;
   sessions: SessionRecord[];
   customPresets: CustomPreset[];
+  course: CourseState;
 }
 
 /** [testo da leggere, pausa in secondi dopo il testo] */
-export type Segment = [text: string, pauseSec: number];
+export type Segment = [text: string, pauseSec: number, fx?: string];
 
 export interface Meditation {
   id: string;
