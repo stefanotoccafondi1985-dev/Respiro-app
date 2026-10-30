@@ -117,7 +117,7 @@ describe("pianificazione delle frasi", () => {
   });
 });
 
-describe("test del massimo", () => {
+describe("test del massimale", () => {
   it("con il PB noto compaiono le frasi sul record, nell'ordine giusto", () => {
     const e = says(buildTestCoach(120, { gong: false, phrases: true }));
     const r = coachPhrases.testRecord;

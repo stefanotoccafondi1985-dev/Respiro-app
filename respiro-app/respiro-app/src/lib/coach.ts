@@ -70,7 +70,7 @@ function regularPool(k: number): PhrasePool {
   return (["contrazioni", "avanti", "contrazioni", "sicurezza"] as PhrasePool[])[(k - 3) % 4];
 }
 
-/** Frasi di un'apnea. `duration` è null se non si sa quando finisce (test del massimo). */
+/** Frasi di un'apnea. `duration` è null se non si sa quando finisce (test del massimale). */
 function regularCands(duration: number | null, pick: (l: readonly string[]) => string, max: number): Cand[] {
   const last = duration === null ? max : duration - 14;
   const out: Cand[] = [];
@@ -115,7 +115,7 @@ export function buildTableCoach(steps: CoachStep[], type: "co2" | "o2", rounds: 
   return events.sort((a, b) => a.at - b.at);
 }
 
-/** Eventi del test del massimo (durata massima 10 minuti). Con il PB noto, frasi legate al record. */
+/** Eventi del test del massimale (durata massima 10 minuti). Con il PB noto, frasi legate al record. */
 export function buildTestCoach(pb: number | null, o: CoachOptions, max = 600): CoachEvent[] {
   if (!o.gong && !o.phrases) return [];
   const pick = makeChooser(o.rng ?? Math.random);
