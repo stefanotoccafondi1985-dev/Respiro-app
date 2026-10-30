@@ -1,5 +1,6 @@
 import { meditations } from "../data/meditations";
 import { APP_VERSION, buildLabel } from "../version";
+import { MusicPicker } from "../components/MusicPicker";
 import { CoachOptions } from "../components/CoachOptions";
 import { useState } from "react";
 import { Modal, Seg } from "../components/ui";
@@ -77,6 +78,17 @@ export function Settings({ onClose }: { onClose: () => void }) {
         <section className="card">
           <h2>Apnea</h2>
           <CoachOptions />
+        </section>
+
+        <section className="card">
+          <h2>Meditazione Libera</h2>
+          <MusicPicker
+            id="set-med"
+            kind={settings.meditationMusic}
+            volume={settings.meditationMusicVolume}
+            onKind={(v) => updateSettings({ meditationMusic: v })}
+            onVolume={(v) => updateSettings({ meditationMusicVolume: v })}
+          />
         </section>
 
         <section className="card">

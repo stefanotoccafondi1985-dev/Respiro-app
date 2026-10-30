@@ -3,7 +3,10 @@ import { Summary, type Result } from "../components/Dialogs";
 import { Seg } from "../components/ui";
 import { beep, initAudio, vibrate } from "../lib/audio";
 import { fmt } from "../lib/format";
+import { MusicPicker } from "../components/MusicPicker";
 import { useRunner, useWakeLock } from "../lib/hooks";
+import { muteMusic, startMusic, stopMusic } from "../lib/sound";
+import { getState, updateSettings, useStore } from "../store";
 
 const DURATIONS = [5, 10, 15, 20, 30, 45, 60];
 
@@ -11,6 +14,7 @@ export function MeditationTimer() {
   const [minutes, setMinutes] = useState(10);
   const [interval, setIntervalMin] = useState(0);
   const [running, setRunning] = useState(false);
+  const { settings } = useStore();
 
   if (running) return <Running minutes={minutes} interval={interval} onClose={() => setRunning(false)} />;
 
@@ -37,6 +41,13 @@ export function MeditationTimer() {
           ]}
         />
       </div>
+      <MusicPicker
+        id="med"
+        kind={settings.meditationMusic}
+        volume={settings.meditationMusicVolume}
+        onKind={(v) => updateSettings({ meditationMusic: v })}
+        onVolume={(v) => updateSettings({ meditationMusicVolume: v })}
+      />
       <p className="hint">10 secondi di preparazione, campana all'inizio e alla fine. Schermo scuro con solo il tempo rimasto.</p>
       <button
         className="btn full"
@@ -63,6 +74,18 @@ function Running({ minutes, interval, onClose }: { minutes: number; interval: nu
   useWakeLock();
   const startedAt = useRef(new Date().toISOString());
   const [summary, setSummary] = useState<{ result: Result; manual: boolean } | null>(null);
+
+  // sottofondo scelto prima di cominciare: parte con la preparazione, si ferma alla fine, tace in pausa
+  useEffect(() => {
+    const { meditationMusic, meditationMusicVolume } = getState().settings;
+    if (summary || meditationMusic === "off") return;
+    initAudio();
+    startMusic(meditationMusic, meditationMusicVolume);
+    return () => stopMusic(2.5);
+  }, [summary]);
+  useEffect(() => {
+    muteMusic(r.paused);
+  }, [r.paused]);
 
   const finish = (manual: boolean) => {
     if (summary) return;
