@@ -108,8 +108,9 @@ interface Music {
 let music: Music | null = null;
 let userVolume = 0.5;
 let ducked = false;
+let muted = false;
 
-const level = () => Math.max(0.0001, userVolume * userVolume * (ducked ? 0.4 : 1)); // curva quadratica: il volume basso è davvero basso
+const level = () => (muted ? 0.0001 : Math.max(0.0001, userVolume * userVolume * (ducked ? 0.4 : 1))); // curva quadratica: il volume basso è davvero basso
 
 function ramp(gain: GainNode, ctx: AudioContext, to: number, secs: number) {
   const now = ctx.currentTime;
@@ -125,6 +126,7 @@ export function startMusic(kind: MusicKind, volume: number) {
   try {
     userVolume = volume;
     ducked = false;
+    muted = false;
     const gain = ctx.createGain();
     gain.gain.value = 0.0001;
     gain.connect(ctx.destination);
@@ -235,3 +237,10 @@ export function duckMusic(on: boolean) {
 }
 
 export const musicPlaying = () => music?.kind ?? null;
+
+/** Silenzia il sottofondo (per esempio in pausa) con una breve dissolvenza, e lo riporta al volume scelto. */
+export function muteMusic(on: boolean) {
+  muted = on;
+  const ctx = getCtx();
+  if (music && ctx) ramp(music.gain, ctx, level(), on ? 0.6 : 1.2);
+}
