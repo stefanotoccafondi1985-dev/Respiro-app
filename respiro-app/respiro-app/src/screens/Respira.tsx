@@ -12,16 +12,16 @@ export function Respira({ initial }: { initial?: RespiraSub }) {
     <>
       <header>
         <h1>Respira</h1>
-        <p className="sub">Pranayama, audiomeditazioni e meditazione libera.</p>
+        <p className="sub">Meditazione libera, audio meditazioni e pranayama.</p>
       </header>
       <Seg
         label="Sezione"
         value={sub}
         onChange={setSub}
         options={[
+          { value: "timer", label: "Meditazione\nLibera" },
+          { value: "guided", label: "Audio\nMeditazioni" },
           { value: "pranayama", label: "Pranayama" },
-          { value: "guided", label: "Audiomeditazioni" },
-          { value: "timer", label: "Meditazione libera" },
         ]}
       />
       {sub === "pranayama" && <Pranayama />}

@@ -69,7 +69,7 @@ export function Home({ go, openSettings }: Nav) {
           <b>Pranayama</b>
         </button>
         <button className="item" onClick={() => go("respira", { sub: "guided" })}>
-          <b>Audiomeditazioni</b>
+          <b>Audio Meditazioni</b>
         </button>
       </div>
 

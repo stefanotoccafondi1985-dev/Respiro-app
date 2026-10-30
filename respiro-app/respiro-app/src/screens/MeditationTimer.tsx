@@ -16,7 +16,7 @@ export function MeditationTimer() {
 
   return (
     <div className="card">
-      <h2>Meditazione libera</h2>
+      <h2>Meditazione Libera</h2>
       <div className="chips" role="group" aria-label="Durata">
         {DURATIONS.map((d) => (
           <button key={d} className="chip" aria-pressed={d === minutes} onClick={() => setMinutes(d)}>
