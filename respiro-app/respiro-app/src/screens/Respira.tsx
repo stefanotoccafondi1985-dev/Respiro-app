@@ -19,7 +19,7 @@ export function Respira({ initial }: { initial?: RespiraSub }) {
         value={sub}
         onChange={setSub}
         options={[
-          { value: "timer", label: "Meditazione\nLibera" },
+          { value: "timer", label: "Meditazione" },
           { value: "guided", label: "Audio\nMeditazioni" },
           { value: "pranayama", label: "Pranayama" },
         ]}

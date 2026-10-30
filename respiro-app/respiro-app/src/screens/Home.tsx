@@ -1,4 +1,4 @@
-import { fmt, fmtDateTime } from "../lib/format";
+import { fmt } from "../lib/format";
 import { useStore } from "../store";
 import type { TableType } from "../types";
 import type { RespiraSub } from "./Respira";
@@ -12,7 +12,6 @@ export function Home({ go, openSettings }: Nav) {
   const { profile, sessions } = useStore();
   const lastTable = sessions.find((s) => s.type === "co2" || s.type === "o2");
   const next: TableType = lastTable?.type === "co2" ? "o2" : "co2";
-  const last = sessions[0];
 
   return (
     <>
@@ -40,6 +39,14 @@ export function Home({ go, openSettings }: Nav) {
         )}
       </section>
 
+      <button className="item" onClick={() => go("respira", { sub: "timer" })}>
+        <span>
+          <b>Meditiamo insieme</b>
+          <small>Meditazione libera in autonomia, oppure il corso guidato</small>
+        </span>
+        <span className="pat">→</span>
+      </button>
+
       <section className="card">
         <h2>Sessione suggerita</h2>
         {profile.pb ? (
@@ -57,35 +64,6 @@ export function Home({ go, openSettings }: Nav) {
           </button>
         )}
       </section>
-
-      <div className="list" style={{ gridTemplateColumns: "1fr 1fr" }}>
-        <button className="item" onClick={() => go("apnea", { table: "co2" })} disabled={!profile.pb}>
-          <b>CO2</b>
-        </button>
-        <button className="item" onClick={() => go("apnea", { table: "o2" })} disabled={!profile.pb}>
-          <b>O2</b>
-        </button>
-        <button className="item" onClick={() => go("respira", { sub: "pranayama" })}>
-          <b>Pranayama</b>
-        </button>
-        <button className="item" onClick={() => go("respira", { sub: "guided" })}>
-          <b>Audio Meditazioni</b>
-        </button>
-      </div>
-
-      {last && (
-        <section className="card">
-          <h2>Ultima sessione</h2>
-          <div className="row between">
-            <span>
-              <b>{last.title}</b>
-              <br />
-              <span className="hint">{fmtDateTime(last.startedAt)}</span>
-            </span>
-            <span className="pat">{fmt(last.durationSec)}</span>
-          </div>
-        </section>
-      )}
     </>
   );
 }
