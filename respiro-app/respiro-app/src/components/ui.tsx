@@ -120,3 +120,17 @@ export function MenuBox({ title, text, onClick }: { title: string; text?: string
     </button>
   );
 }
+
+/** Avviso giallo con simbolo di pericolo (triangolo con punto esclamativo). */
+export function Warning({ children }: { children: ReactNode }) {
+  return (
+    <p className="warning">
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+        <path d="M12 2.8 22.2 20.5H1.8Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+        <path d="M12 9.5v5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+        <circle cx="12" cy="17.5" r="1.4" fill="currentColor" />
+      </svg>
+      <span>{children}</span>
+    </p>
+  );
+}
