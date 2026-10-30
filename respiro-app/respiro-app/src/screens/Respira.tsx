@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Seg } from "../components/ui";
-import { MeditationTimer } from "./MeditationTimer";
+import { MeditationHub } from "./MeditationHub";
 import { Meditations } from "./Meditations";
 import { Pranayama } from "./Pranayama";
 
@@ -26,7 +26,7 @@ export function Respira({ initial }: { initial?: RespiraSub }) {
       />
       {sub === "pranayama" && <Pranayama />}
       {sub === "guided" && <Meditations />}
-      {sub === "timer" && <MeditationTimer />}
+      {sub === "timer" && <MeditationHub />}
     </>
   );
 }
