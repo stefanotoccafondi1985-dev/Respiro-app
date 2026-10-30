@@ -48,6 +48,8 @@ export interface SpeakOpts {
   voiceURI: string | null;
   rate: number;
   volume?: number;
+  /** Tono della voce, 1 = normale. Predefinito 0,95. */
+  pitch?: number;
 }
 
 /** Legge un testo; chiama done() alla fine (o se la sintesi si interrompe per errore). */
@@ -66,7 +68,7 @@ export function speak(text: string, o: SpeakOpts, done?: () => void) {
       text,
       lang: v?.lang.replace("_", "-") ?? "it-IT",
       rate: o.rate,
-      pitch: 0.95,
+      pitch: o.pitch ?? 0.95,
       volume: o.volume ?? 1,
       voice: v?.nativeIndex,
     })
@@ -82,7 +84,7 @@ export function speak(text: string, o: SpeakOpts, done?: () => void) {
   u.lang = v?.lang ?? "it-IT";
   if (v) u.voice = v;
   u.rate = o.rate;
-  u.pitch = 0.95;
+  u.pitch = o.pitch ?? 0.95;
   u.volume = o.volume ?? 1;
   u.onend = fin;
   u.onerror = (e) => {
@@ -103,6 +105,8 @@ export function stopSpeaking() {
 
 export interface NarratorEvents {
   onSegment: (index: number, text: string) => void;
+  /** Inizio della pausa dopo una frase. `resumed` è vero se riparte dopo una pausa dell'utente. */
+  onPause?: (index: number, seconds: number, fx: string | undefined, resumed: boolean) => void;
   onEnd: () => void;
 }
 
@@ -166,6 +170,7 @@ export class Narrator {
     this.phase = "wait";
     this.waitUntil = performance.now() + this.segments[this.i][1] * 1000;
     this.waitTimer = setInterval(() => this.check(), 200);
+    this.ev.onPause?.(this.i, this.segments[this.i][1], this.segments[this.i][2], false);
   }
 
   private check() {
@@ -195,6 +200,7 @@ export class Narrator {
     if (this.phase === "wait") {
       this.waitUntil = performance.now() + this.remain;
       this.waitTimer = setInterval(() => this.check(), 200);
+      this.ev.onPause?.(this.i, this.remain / 1000, this.segments[this.i][2], true);
     } else if (this.phase === "speak") {
       this.say(); // rilegge la frase interrotta
     }

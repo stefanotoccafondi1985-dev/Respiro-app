@@ -244,3 +244,65 @@ export function muteMusic(on: boolean) {
   const ctx = getCtx();
   if (music && ctx) ramp(music.gain, ctx, level(), on ? 0.6 : 1.2);
 }
+
+/** Campana tibetana: un colpo morbido con armoniche non esatte e una coda lunga. */
+export function bowl() {
+  const ctx = getCtx();
+  if (!ctx) return;
+  try {
+    const { volume } = getState().settings;
+    const now = ctx.currentTime;
+    const master = ctx.createGain();
+    master.gain.value = Math.max(0.05, 0.8 * volume);
+    master.connect(ctx.destination);
+    // [rapporto, ampiezza, durata della coda in secondi]
+    const partials: [number, number, number][] = [
+      [1, 1, 11],
+      [2.71, 0.5, 7],
+      [5.2, 0.28, 4.5],
+      [8.6, 0.12, 2.5],
+    ];
+    const base = 261.6; // Do4
+    for (const [ratio, amp, decay] of partials) {
+      for (const detune of ratio === 1 ? [0, 1.6] : [0]) {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = "sine";
+        o.frequency.value = base * ratio + detune; // lo scarto di 1,6 Hz crea il battimento della campana
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.exponentialRampToValueAtTime(0.28 * amp, now + 0.04);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+        o.connect(g);
+        g.connect(master);
+        o.start(now);
+        o.stop(now + decay + 0.05);
+      }
+    }
+  } catch {
+    /* ignora */
+  }
+}
+
+/** Battito grave, per chi non sente la vibrazione del telefono (iPhone, computer). */
+export function thump() {
+  const ctx = getCtx();
+  if (!ctx) return;
+  try {
+    const { volume } = getState().settings;
+    const now = ctx.currentTime;
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = "sine";
+    o.frequency.setValueAtTime(90, now);
+    o.frequency.exponentialRampToValueAtTime(55, now + 0.3);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.05, 0.6 * volume), now + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+    o.connect(g);
+    g.connect(ctx.destination);
+    o.start(now);
+    o.stop(now + 0.5);
+  } catch {
+    /* ignora */
+  }
+}
