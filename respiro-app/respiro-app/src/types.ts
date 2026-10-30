@@ -7,7 +7,7 @@ export interface Row {
   rec: number;
 }
 
-export type SessionType = "test" | "co2" | "o2" | "pranayama" | "meditation" | "guided";
+export type SessionType = "test" | "co2" | "o2" | "pranayama" | "meditation" | "course" | "guided";
 
 export interface SessionRecord {
   id: string;

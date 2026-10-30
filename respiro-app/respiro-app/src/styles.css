@@ -174,9 +174,9 @@ td.hold { color: var(--hold); font-weight: 600; }
 .bgart { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
 .bgart svg { position: absolute; height: auto; opacity: 0.5; animation: bob 11s ease-in-out infinite; }
 .bgart .tl { top: -6px; left: -8px; width: clamp(84px, 24vw, 130px); }
-.bgart .tr { top: 4px; right: -14px; width: clamp(130px, 38vw, 210px); animation-delay: -4s; }
-.bgart .bl { bottom: 70px; left: -6px; width: clamp(96px, 28vw, 150px); animation-delay: -7s; }
-.bgart .br { bottom: 66px; right: -4px; width: clamp(74px, 21vw, 118px); animation: none; }
+.bgart .tr { top: 6px; right: 6px; width: clamp(64px, 19vw, 100px); animation-delay: -4s; }
+.bgart .bl { bottom: 70px; left: 4px; width: clamp(104px, 30vw, 160px); animation-delay: -7s; }
+.bgart .br { bottom: 66px; right: 6px; width: clamp(66px, 19vw, 104px); animation: none; }
 @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 .app { position: relative; }
 /* niente z-index qui: altrimenti il menu in basso finisce sopra le sessioni a schermo intero */
@@ -208,3 +208,12 @@ td.hold { color: var(--hold); font-weight: 600; }
 .back { align-self: flex-start; }
 .warning { display: flex; gap: 10px; align-items: flex-start; background: #ffef5a; color: #2a2300; border-radius: 10px; padding: 12px 14px; font-size: 14px; font-weight: 600; }
 .warning svg { flex: none; margin-top: 1px; }
+
+/* --- carosello dello storico --- */
+.carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; gap: 0; }
+.carousel::-webkit-scrollbar { display: none; }
+.slide { flex: 0 0 100%; scroll-snap-align: start; display: grid; gap: 14px; align-content: start; padding: 0 1px; min-width: 0; }
+.dots { display: flex; justify-content: center; gap: 4px; margin-top: 6px; }
+.dot { width: 28px; height: 28px; background: none; border: 0; padding: 0; position: relative; cursor: pointer; }
+.dot::after { content: ""; position: absolute; inset: 10px; border-radius: 50%; background: var(--line); }
+.dot[aria-selected="true"]::after { background: var(--accent); inset: 8px; }
