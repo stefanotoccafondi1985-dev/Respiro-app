@@ -6,7 +6,7 @@ const KEY = "respiro:v1";
 const defaults: AppState = {
   version: 1,
   profile: { onboarded: false, safetyAcceptedAt: null, level: "intermediate", pb: null, pbHistory: [] },
-  settings: { sound: true, volume: 0.7, vibration: true, coachGong: false, coachPhrases: false, coachMusic: "off", coachMusicVolume: 0.5, voiceURI: null, rate: 0.85 },
+  settings: { sound: true, volume: 0.7, vibration: true, coachGong: false, coachPhrases: false, coachMusic: "off", coachMusicVolume: 0.5, meditationMusic: "off", meditationMusicVolume: 0.5, voiceURI: null, rate: 0.85 },
   sessions: [],
   customPresets: [],
 };

@@ -179,6 +179,7 @@ td.hold { color: var(--hold); font-weight: 600; }
 .bgart .br { bottom: 66px; right: -4px; width: clamp(74px, 21vw, 118px); animation: none; }
 @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 .app { position: relative; }
-.app > main, .app > nav { position: relative; z-index: 1; }
+/* niente z-index qui: altrimenti il menu in basso finisce sopra le sessioni a schermo intero */
+.app > main { position: relative; }
 .app > nav { position: sticky; }
 @media (prefers-reduced-motion: reduce) { .bgart svg { animation: none; } }

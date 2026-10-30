@@ -36,6 +36,9 @@ export interface Settings {
   /** Coach in apnea: sottofondo. */
   coachMusic: CoachMusic;
   coachMusicVolume: number; // 0-1
+  /** Meditazione libera: sottofondo. */
+  meditationMusic: CoachMusic;
+  meditationMusicVolume: number; // 0-1
   voiceURI: string | null;
   rate: number; // 0.7-1
 }
