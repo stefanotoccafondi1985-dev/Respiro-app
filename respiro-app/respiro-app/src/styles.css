@@ -203,3 +203,8 @@ td.hold { color: var(--hold); font-weight: 600; }
 .item.lesson .num.done { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
 .prep { margin: 0; padding-left: 20px; display: grid; gap: 4px; color: var(--muted); font-size: 14px; }
 @media (prefers-reduced-motion: reduce) { .flame-fire, .pulse-orb.beat { animation: none; } }
+
+/* --- pagine e avvisi --- */
+.back { align-self: flex-start; }
+.warning { display: flex; gap: 10px; align-items: flex-start; background: #ffef5a; color: #2a2300; border-radius: 10px; padding: 12px 14px; font-size: 14px; font-weight: 600; }
+.warning svg { flex: none; margin-top: 1px; }
