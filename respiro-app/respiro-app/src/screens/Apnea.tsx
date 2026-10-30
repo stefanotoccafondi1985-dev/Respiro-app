@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { SafetyReminder } from "../components/Dialogs";
-import { Stepper } from "../components/ui";
+import { Stepper, Warning } from "../components/ui";
 import { fmt } from "../lib/format";
 import { defaultParams, generateTable, maxHoldRatio, totalSeconds, WARN_RATIO, type TableParams } from "../lib/tables";
 import { useStore } from "../store";
@@ -33,11 +33,11 @@ export function Apnea({ initialTable, onConsumed }: { initialTable?: TableType; 
         <h1>Apnea</h1>
         <p className="sub">Allenamento a secco con tabelle calcolate sul tuo personal best.</p>
       </header>
-      <p className="note">Solo seduti o sdraiati, a secco. Mai in acqua, alla guida o dopo iperventilazione.</p>
+      <Warning>Solo seduti o sdraiati, a secco. Mai in acqua, alla guida o dopo iperventilazione.</Warning>
       <div className="list">
         <button className="item" onClick={() => setConfirmTest(true)}>
           <span>
-            <b>Test del massimo</b>
+            <b>Test del massimale</b>
             <small>Misura il tuo personal best</small>
           </span>
           <span className="pat">{profile.pb ? fmt(profile.pb) : "—"}</span>
@@ -57,7 +57,7 @@ export function Apnea({ initialTable, onConsumed }: { initialTable?: TableType; 
           <span className="pat">→</span>
         </button>
       </div>
-      {!profile.pb && <p className="hint">Le tabelle si sbloccano dopo il primo test del massimo, oppure inserendo il PB in Impostazioni.</p>}
+      {!profile.pb && <p className="hint">Le tabelle si sbloccano dopo il primo test del massimale, oppure inserendo il PB in Impostazioni.</p>}
       {confirmTest && <SafetyReminder onCancel={() => setConfirmTest(false)} onConfirm={() => (setConfirmTest(false), setTesting(true))} />}
     </>
   );

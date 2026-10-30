@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BackButton } from "../components/ui";
+import { BackButton, Warning } from "../components/ui";
 import { meditations } from "../data/meditations";
 import { initAudio, beep } from "../lib/audio";
 import { estimateMinutes } from "../lib/meditation";
@@ -131,14 +131,7 @@ export function Meditations({ onBack }: { onBack: () => void }) {
         <h1>Audio Meditazioni</h1>
         <p className="sub">Meditazioni guidate da una voce italiana.</p>
       </header>
-      <p className="warning">
-        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
-          <path d="M12 2.8 22.2 20.5H1.8Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-          <path d="M12 9.5v5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-          <circle cx="12" cy="17.5" r="1.4" fill="currentColor" />
-        </svg>
-        <span>Ascolta da seduto o sdraiato, mai alla guida. Le meditazioni non sostituiscono un supporto medico o psicologico.</span>
-      </p>
+      <Warning>Ascolta da seduto o sdraiato, mai alla guida. Le meditazioni non sostituiscono un supporto medico o psicologico.</Warning>
       <div className="chips" role="group" aria-label="Categorie">
         {cats.map((c) => (
           <button key={c} className="chip" aria-pressed={c === cat} onClick={() => setCat(c)}>

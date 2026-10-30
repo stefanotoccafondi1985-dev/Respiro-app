@@ -10,7 +10,7 @@ import { addSession, getState, setPB } from "../store";
 
 type Phase = "intro" | "running" | "result";
 
-/** Test del massimo: cronometro in avanti. Il PB cambia solo se l'utente conferma. */
+/** Test del massimale: cronometro in avanti. Il PB cambia solo se l'utente conferma. */
 export function TestSession({ onClose, showCoach = false }: { onClose: () => void; showCoach?: boolean }) {
   const [phase, setPhase] = useState<Phase>("intro");
   const [, force] = useState(0);
@@ -41,7 +41,7 @@ export function TestSession({ onClose, showCoach = false }: { onClose: () => voi
     setPhase("result");
   };
   const record = (asPB: boolean) => {
-    addSession({ id: uid(), type: "test", title: "Test del massimo", startedAt: startedAt.current, durationSec: seconds, testSeconds: seconds });
+    addSession({ id: uid(), type: "test", title: "Test del massimale", startedAt: startedAt.current, durationSec: seconds, testSeconds: seconds });
     if (asPB) setPB(Math.min(599, seconds));
     onClose();
   };
@@ -71,9 +71,9 @@ export function TestSession({ onClose, showCoach = false }: { onClose: () => voi
 
   if (phase === "intro") {
     return (
-      <div className="session" role="dialog" aria-label="Test del massimo">
+      <div className="session" role="dialog" aria-label="Test del massimale">
         <div className="top">
-          <span>Test del massimo</span>
+          <span>Test del massimale</span>
         </div>
         <div className="mid" style={{ maxWidth: 420 }}>
           <h1>Prepara il test</h1>
@@ -101,7 +101,7 @@ export function TestSession({ onClose, showCoach = false }: { onClose: () => voi
   return (
     <div className="session" role="dialog" aria-label="Test in corso">
       <div className="top">
-        <span>Test del massimo</span>
+        <span>Test del massimale</span>
       </div>
       <div className="mid">
         <div className="bigtime" aria-live="off">

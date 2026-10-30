@@ -46,7 +46,7 @@ export function CoursePlayer({ lesson, onClose }: { lesson: Lesson; onClose: () 
     setSummary({
       manual,
       result: {
-        type: "guided",
+        type: "course",
         title: `Corso ${lesson.n}. ${lesson.title}`,
         startedAt: startedAt.current,
         durationSec: Math.round((performance.now() - t0.current) / 1000),

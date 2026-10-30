@@ -35,7 +35,7 @@ export function Home({ go, openSettings }: Nav) {
             </span>
           </div>
         ) : (
-          <p className="hint">Non hai ancora un PB. Misuralo con il test del massimo.</p>
+          <p className="hint">Non hai ancora un PB. Misuralo con il test del massimale.</p>
         )}
       </section>
 
@@ -60,7 +60,7 @@ export function Home({ go, openSettings }: Nav) {
           </>
         ) : (
           <button className="btn" onClick={() => go("apnea")}>
-            Vai al test del massimo
+            Vai al test del massimale
           </button>
         )}
       </section>

@@ -63,7 +63,7 @@ export function Onboarding({ onTest }: { onTest: () => void }) {
             />
             <div className="card">
               <h2>Personal best di apnea</h2>
-              <p className="hint">Se lo conosci, inseriscilo. Altrimenti misuralo ora con il test del massimo, da riposato e in un posto sicuro.</p>
+              <p className="hint">Se lo conosci, inseriscilo. Altrimenti misuralo ora con il test del massimale, da riposato e in un posto sicuro.</p>
               <div className="row">
                 <input
                   type="number"
