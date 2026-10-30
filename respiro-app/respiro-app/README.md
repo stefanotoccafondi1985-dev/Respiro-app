@@ -13,7 +13,7 @@ Gratuita e open source (licenza MIT). Funziona nel browser, si installa sul tele
 - **Pranayama**: respirazione coerente, diaframmatica, box breathing, 4-7-8, Anulom Vilom, Bhramari, Ujjayi, Kapalabhati e Bhastrika, con fasi modificabili e preset personali.
 - **40 meditazioni guidate in italiano** (20 brevi da 2-5 minuti, 10 da circa 10 minuti, 10 da circa 20 minuti), lette da una voce italiana, con filtri per categoria e durata, scelta della voce, velocità e sottotitoli.
 - **Coach in apnea** (test del massimo e tabelle CO2/O2), tutto facoltativo: gong ogni 30 secondi di apnea, frasi di incoraggiamento lette dalla voce e sottofondo (rumore marrone o musica rilassante, generati dall'app). Si scelgono con le caselle nell'avviso prima di ogni sessione, e anche in Impostazioni.
-- **Meditazione libera**: timer da 5 a 60 minuti con campane.
+- **Meditazione Libera**: timer da 5 a 60 minuti con campane.
 - **Storico** con grafico del PB e delle sessioni per settimana; **Impostazioni** con esportazione e cancellazione dei dati.
 
 I dati restano sul dispositivo (localStorage). Nessun account, nessun server, nessuna analisi di utilizzo.
@@ -78,7 +78,7 @@ La lettura usa la sintesi vocale del dispositivo (Web Speech API) con le voci it
 
 La qualità cambia da dispositivo a dispositivo. Per una voce professionale che suona uguale su tutti i telefoni:
 
-1. Nella scheda Respira, Audiomeditazioni, tocca **SSML** accanto alla meditazione e copia il testo.
+1. Nella scheda Respira, Audio Meditazioni, tocca **SSML** accanto alla meditazione e copia il testo.
 2. Incollalo in un servizio di sintesi vocale che supporta SSML e le voci neurali italiane e scarica l'MP3. Controlla i termini d'uso, in particolare per un uso commerciale.
 3. Metti il file in `public/audio/` (per esempio `public/audio/scansione-corpo.mp3`).
 4. In `src/data/meditations.ts` aggiungi alla meditazione `audioUrl: "audio/scansione-corpo.mp3"`.
