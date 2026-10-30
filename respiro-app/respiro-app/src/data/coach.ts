@@ -90,12 +90,12 @@ export const coachPhrases = {
   inizioSessione: ["Mettiti comodo. Respira con calma e lascia andare le spalle."],
   /** Fine della tabella. */
   fineTabella: ["Tabella completata. Bravo. Respira con calma e rilassa tutto il corpo."],
-  /** Test del massimo: all'inizio. */
+  /** Test del massimale: all'inizio. */
   testInizio: [
     "Rilassati. Non c'è fretta, e puoi respirare quando vuoi.",
     "Resta calmo e immobile. Il tempo scorre da solo.",
   ],
-  /** Test del massimo: obiettivo del record personale. */
+  /** Test del massimale: obiettivo del record personale. */
   testRecord: {
     vicino: "Sei a due terzi del tuo record. Resta calmo e rilassato.",
     dieci: "Mancano dieci secondi al tuo record. Rilassa le spalle.",
