@@ -14,16 +14,6 @@ const TYPE_LABEL: Record<SessionType, string> = {
   guided: "Guidata",
 };
 
-const FILTERS: { value: SessionType | "all"; label: string }[] = [
-  { value: "all", label: "Tutte" },
-  { value: "test", label: "Test" },
-  { value: "co2", label: "CO2" },
-  { value: "o2", label: "O2" },
-  { value: "pranayama", label: "Pranayama" },
-  { value: "meditation", label: "Meditazione" },
-  { value: "guided", label: "Guidate" },
-];
-
 /** Ultime 8 settimane, dalla più vecchia alla più recente. */
 function lastWeeks(sessions: SessionRecord[]) {
   const now = new Date();
@@ -40,18 +30,14 @@ function lastWeeks(sessions: SessionRecord[]) {
 
 export function History() {
   const { sessions, profile } = useStore();
-  const [filter, setFilter] = useState<SessionType | "all">("all");
+  const [selected, setSelected] = useState<SessionType | null>(null);
   const [detail, setDetail] = useState<SessionRecord | null>(null);
 
-  const list = useMemo(() => sessions.filter((s) => filter === "all" || s.type === filter), [sessions, filter]);
-  const groups = useMemo(() => {
-    const m = new Map<string, SessionRecord[]>();
-    for (const s of list) {
-      const k = weekStart(s.startedAt);
-      m.set(k, [...(m.get(k) ?? []), s]);
-    }
-    return [...m.entries()].sort((a, b) => b[0].localeCompare(a[0]));
-  }, [list]);
+  const cats = useMemo(
+    () => (Object.keys(TYPE_LABEL) as SessionType[]).map((t) => ({ t, n: sessions.filter((s) => s.type === t).length })).filter((c) => c.n > 0),
+    [sessions],
+  );
+  const list = useMemo(() => (selected ? sessions.filter((s) => s.type === selected) : []), [sessions, selected]);
   const weeks = useMemo(() => lastWeeks(sessions), [sessions]);
 
   return (
@@ -61,47 +47,52 @@ export function History() {
         <p className="sub">Le tue sessioni e l'andamento del personal best.</p>
       </header>
 
-      <section className="card">
-        <h2>Personal best nel tempo</h2>
-        {profile.pbHistory.length === 0 ? (
-          <p className="empty">Nessun PB salvato. Fai un test del massimo per iniziare.</p>
-        ) : (
-          <LineChart points={profile.pbHistory.map((p) => p.seconds)} labels={profile.pbHistory.map((p) => fmtDate(p.date))} />
-        )}
-      </section>
+      {!selected && (
+        <>
+          <section className="card">
+            <h2>Personal best nel tempo</h2>
+            {profile.pbHistory.length === 0 ? (
+              <p className="empty">Nessun PB salvato. Fai un test del massimo per iniziare.</p>
+            ) : (
+              <LineChart points={profile.pbHistory.map((p) => p.seconds)} labels={profile.pbHistory.map((p) => fmtDate(p.date))} />
+            )}
+          </section>
 
-      <section className="card">
-        <h2>Sessioni per settimana</h2>
-        <BarChart values={weeks.counts} labels={weeks.labels} />
-      </section>
+          <section className="card">
+            <h2>Sessioni per settimana</h2>
+            <BarChart values={weeks.counts} labels={weeks.labels} />
+          </section>
+        </>
+      )}
 
-      <div className="chips" role="group" aria-label="Filtro per tipo">
-        {FILTERS.map((f) => (
-          <button key={f.value} className="chip" aria-pressed={filter === f.value} onClick={() => setFilter(f.value)}>
-            {f.label}
-          </button>
-        ))}
-      </div>
+      {cats.length === 0 ? (
+        <p className="empty">Nessuna sessione ancora.</p>
+      ) : (
+        <div className="chips" role="group" aria-label="Categorie">
+          {cats.map(({ t, n }) => (
+            <button key={t} className="chip" aria-pressed={selected === t} onClick={() => setSelected(selected === t ? null : t)}>
+              {TYPE_LABEL[t]} ({n})
+            </button>
+          ))}
+        </div>
+      )}
 
-      {groups.length === 0 && <p className="empty">Nessuna sessione{filter === "all" ? " ancora" : " di questo tipo"}.</p>}
-      {groups.map(([wk, items]) => (
-        <section key={wk}>
-          <h2>Settimana del {fmtDate(wk + "T12:00:00")}</h2>
+      {selected && (
+        <section>
+          <h2>{TYPE_LABEL[selected]}</h2>
           <div className="list">
-            {items.map((s) => (
+            {list.map((s) => (
               <button key={s.id} className="item" onClick={() => setDetail(s)}>
                 <span>
                   <b>{s.title}</b>
-                  <small>
-                    {TYPE_LABEL[s.type]} · {fmtDateTime(s.startedAt)}
-                  </small>
+                  <small>{fmtDateTime(s.startedAt)}</small>
                 </span>
-                <span className="pat">{fmt(s.durationSec)}</span>
+                <span className="pat">{s.testSeconds !== undefined ? fmt(s.testSeconds) : fmt(s.durationSec)}</span>
               </button>
             ))}
           </div>
         </section>
-      ))}
+      )}
 
       {detail && (
         <Modal

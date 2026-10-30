@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { Modal } from "../components/ui";
+import { BackButton } from "../components/ui";
 import { meditations } from "../data/meditations";
 import { initAudio, beep } from "../lib/audio";
-import { estimateMinutes, toSSML } from "../lib/meditation";
+import { estimateMinutes } from "../lib/meditation";
 import { loadItalianVoices, speak, speechSupported, stopSpeaking, type VoiceInfo } from "../lib/narrator";
 import { updateSettings, useStore } from "../store";
 import type { Meditation } from "../types";
@@ -74,12 +74,12 @@ export function VoiceCard() {
   );
 }
 
-export function Meditations() {
+export function Meditations({ onBack }: { onBack: () => void }) {
   const { settings } = useStore();
   const [cat, setCat] = useState("Tutte");
   const [len, setLen] = useState<"all" | "short" | "10" | "20">("all");
+  const [pre, setPre] = useState<Meditation | null>(null);
   const [playing, setPlaying] = useState<Meditation | null>(null);
-  const [ssml, setSsml] = useState<Meditation | null>(null);
   const cats = useMemo(() => ["Tutte", ...Array.from(new Set(meditations.map((m) => m.category)))], []);
   const inLength = (m: Meditation) => {
     const min = estimateMinutes(m, settings.rate);
@@ -87,12 +87,58 @@ export function Meditations() {
   };
   const list = meditations.filter((m) => (cat === "Tutte" || m.category === cat) && inLength(m));
 
-  if (playing) return <MeditationPlayer meditation={playing} onClose={() => setPlaying(null)} />;
+  if (playing)
+    return (
+      <MeditationPlayer
+        meditation={playing}
+        onClose={() => {
+          setPlaying(null);
+          setPre(null);
+        }}
+      />
+    );
+
+  if (pre) {
+    return (
+      <>
+        <BackButton onClick={() => setPre(null)} label="Elenco" />
+        <section className="card">
+          <h2>{pre.title}</h2>
+          <p className="hint">
+            {pre.category} · circa {estimateMinutes(pre, settings.rate)} min
+          </p>
+          <p>{pre.description}</p>
+        </section>
+        <VoiceCard />
+        <button
+          className="btn full big"
+          onClick={() => {
+            initAudio();
+            beep(528, 0.01);
+            setPlaying(pre);
+          }}
+        >
+          Avvia
+        </button>
+      </>
+    );
+  }
 
   return (
     <>
-      <VoiceCard />
-      <p className="note">Ascolta da seduto o sdraiato, mai alla guida. Le meditazioni non sostituiscono un supporto medico o psicologico.</p>
+      <BackButton onClick={onBack} label="Respira" />
+      <header>
+        <h1>Audio Meditazioni</h1>
+        <p className="sub">Meditazioni guidate da una voce italiana.</p>
+      </header>
+      <p className="warning">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+          <path d="M12 2.8 22.2 20.5H1.8Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+          <path d="M12 9.5v5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+          <circle cx="12" cy="17.5" r="1.4" fill="currentColor" />
+        </svg>
+        <span>Ascolta da seduto o sdraiato, mai alla guida. Le meditazioni non sostituiscono un supporto medico o psicologico.</span>
+      </p>
       <div className="chips" role="group" aria-label="Categorie">
         {cats.map((c) => (
           <button key={c} className="chip" aria-pressed={c === cat} onClick={() => setCat(c)}>
@@ -117,52 +163,17 @@ export function Meditations() {
       {list.length === 0 && <p className="empty">Nessuna meditazione con questi filtri.</p>}
       <div className="list">
         {list.map((m) => (
-          <div key={m.id} className="med">
-            <button
-              className="item"
-              onClick={() => {
-                initAudio();
-                beep(528, 0.01);
-                setPlaying(m);
-              }}
-            >
-              <span>
-                <b>{m.title}</b>
-                <small>{m.description}</small>
-                <div className="meta">
-                  {m.category} · circa {estimateMinutes(m, settings.rate)} min
-                </div>
-              </span>
-            </button>
-            <button className="btn ghost small" aria-label={`Esporta ${m.title} in SSML`} onClick={() => setSsml(m)}>
-              SSML
-            </button>
-          </div>
+          <button key={m.id} className="item" onClick={() => setPre(m)}>
+            <span>
+              <b>{m.title}</b>
+              <small>{m.description}</small>
+              <small>
+                {m.category} · circa {estimateMinutes(m, settings.rate)} min
+              </small>
+            </span>
+          </button>
         ))}
       </div>
-      {ssml && (
-        <Modal
-          title={`SSML: ${ssml.title}`}
-          actions={
-            <>
-              <button className="btn ghost" onClick={() => setSsml(null)}>
-                Chiudi
-              </button>
-              <button
-                className="btn"
-                onClick={() => {
-                  navigator.clipboard?.writeText(toSSML(ssml)).catch(() => undefined);
-                }}
-              >
-                Copia
-              </button>
-            </>
-          }
-        >
-          <p className="hint">Incolla il testo in un servizio di sintesi vocale che supporta SSML e le voci neurali italiane, poi salva l'audio.</p>
-          <textarea className="mono" readOnly value={toSSML(ssml)} />
-        </Modal>
-      )}
     </>
   );
 }

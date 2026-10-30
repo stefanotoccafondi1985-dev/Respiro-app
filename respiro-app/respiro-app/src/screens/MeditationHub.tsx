@@ -1,25 +1,42 @@
 import { useState } from "react";
-import { Seg } from "../components/ui";
+import { BackButton, MenuBox } from "../components/ui";
+import { lessons } from "../data/course";
 import { Course } from "./Course";
 import { MeditationTimer } from "./MeditationTimer";
 
-type Mode = "free" | "course";
+type Mode = "free" | "course" | null;
 
-/** Scheda "Meditazione Libera": timer libero come prima, oppure il corso guidato. */
-export function MeditationHub() {
-  const [mode, setMode] = useState<Mode>("free");
+/** Pagina "Meditazione": due riquadri, Meditazione Libera e Corso di Meditazione. */
+export function MeditationHub({ onBack }: { onBack: () => void }) {
+  const [mode, setMode] = useState<Mode>(null);
+
+  if (mode === "free") {
+    return (
+      <>
+        <BackButton onClick={() => setMode(null)} label="Meditazione" />
+        <MeditationTimer />
+      </>
+    );
+  }
+  if (mode === "course") {
+    return (
+      <>
+        <BackButton onClick={() => setMode(null)} label="Meditazione" />
+        <Course />
+      </>
+    );
+  }
   return (
     <>
-      <Seg
-        label="Tipo di meditazione"
-        value={mode}
-        onChange={setMode}
-        options={[
-          { value: "free", label: "Meditazione libera" },
-          { value: "course", label: "Corso di meditazione" },
-        ]}
-      />
-      {mode === "free" ? <MeditationTimer /> : <Course />}
+      <BackButton onClick={onBack} label="Respira" />
+      <header>
+        <h1>Meditazione</h1>
+        <p className="sub">Scegli come meditare.</p>
+      </header>
+      <div className="list">
+        <MenuBox title="Meditazione Libera" text="Scegli durata e campana, poi avvia" onClick={() => setMode("free")} />
+        <MenuBox title="Corso di Meditazione" text={`${lessons.length} lezioni guidate, dalle basi alle varie tecniche`} onClick={() => setMode("course")} />
+      </div>
     </>
   );
 }

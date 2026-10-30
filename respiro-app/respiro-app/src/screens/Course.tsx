@@ -30,7 +30,7 @@ function LessonDetail({ lesson, onBack, onStart }: { lesson: Lesson; onBack: () 
         onKind={(v) => updateSettings({ meditationMusic: v })}
         onVolume={(v) => updateSettings({ meditationMusicVolume: v })}
       />
-      <p className="hint">La voce e la velocità si scelgono in Audio Meditazioni. Ascolta da seduto o in piedi nel posto indicato, mai alla guida.</p>
+      <p className="hint">La voce e la velocità si scelgono in Audio Meditazioni, nella schermata prima dell'avvio. Ascolta da seduto o in piedi nel posto indicato, mai alla guida.</p>
       <button className="btn full" onClick={onStart}>
         Inizia la lezione
       </button>

@@ -72,7 +72,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
             <input type="checkbox" checked={settings.vibration} onChange={(e) => updateSettings({ vibration: e.target.checked })} />
             Vibrazione (dove supportata)
           </label>
-          <p className="hint">La voce e la velocità delle meditazioni si scelgono in Respira, sezione Audio Meditazioni.</p>
+          <p className="hint">La voce e la velocità delle meditazioni si scelgono in Respira, Audio Meditazioni, nella schermata prima dell'avvio.</p>
         </section>
 
         <section className="card">
