@@ -98,3 +98,25 @@ export function Ring({ progress, color, children }: { progress: number; color: s
     </div>
   );
 }
+
+/** Torna alla pagina precedente. */
+export function BackButton({ onClick, label = "Indietro" }: { onClick: () => void; label?: string }) {
+  return (
+    <button className="btn ghost small back" onClick={onClick}>
+      <span aria-hidden="true">←</span> {label}
+    </button>
+  );
+}
+
+/** Voce di un menu a riquadri: titolo, riga di descrizione e freccia. */
+export function MenuBox({ title, text, onClick }: { title: string; text?: string; onClick: () => void }) {
+  return (
+    <button className="item" onClick={onClick}>
+      <span>
+        <b>{title}</b>
+        {text && <small>{text}</small>}
+      </span>
+      <span className="pat">→</span>
+    </button>
+  );
+}
