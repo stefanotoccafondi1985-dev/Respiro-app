@@ -13,6 +13,7 @@ Gratuita e open source (licenza MIT). Funziona nel browser, si installa sul tele
 - **Pranayama**: respirazione coerente, diaframmatica, box breathing, 4-7-8, Anulom Vilom, Bhramari, Ujjayi, Kapalabhati e Bhastrika, con fasi modificabili e preset personali.
 - **40 meditazioni guidate in italiano** (20 brevi da 2-5 minuti, 10 da circa 10 minuti, 10 da circa 20 minuti), lette da una voce italiana, con filtri per categoria e durata, scelta della voce, velocità e sottotitoli.
 - **Coach in apnea** (test del massimo e tabelle CO2/O2), tutto facoltativo: gong ogni 30 secondi di apnea, frasi di incoraggiamento lette dalla voce e sottofondo (rumore marrone o musica rilassante, generati dall'app). Si scelgono con le caselle nell'avviso prima di ogni sessione, e anche in Impostazioni.
+- **Corso di meditazione** (in Respira, Meditazione Libera): 13 lezioni guidate da una voce da maestro, dalle basi alle tecniche di respiro, corpo, suono (campana), vista (fiamma sullo schermo), vibrazione (impulsi del telefono e suono mmm), mente, parola, emozioni, gentilezza, camminata e presenza aperta. Con sottofondo facoltativo e avanzamento salvato.
 - **Meditazione Libera**: timer da 5 a 60 minuti con campane.
 - **Storico** con grafico del PB e delle sessioni per settimana; **Impostazioni** con esportazione e cancellazione dei dati.
 
@@ -111,6 +112,7 @@ La durata si calcola da parole e pause (a velocità 0,85 servono circa 1,9 secon
 | Formule e livelli delle tabelle | `src/lib/tables.ts` |
 | Meditazioni (testi e pause) | `src/data/meditations.ts` |
 | Tecniche di pranayama | `src/data/pranayama.ts` |
+| Lezioni del corso di meditazione | `src/data/course.ts` |
 | Frasi del coach in apnea | `src/data/coach.ts` |
 | Quando suonano gong e frasi | `src/lib/coach.ts` |
 | Gong, rumore marrone, musica | `src/lib/sound.ts` |
