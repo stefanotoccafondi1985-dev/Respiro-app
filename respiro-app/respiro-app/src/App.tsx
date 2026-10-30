@@ -1,3 +1,4 @@
+import { BackgroundArt } from "./components/BackgroundArt";
 import { useState } from "react";
 import { Apnea } from "./screens/Apnea";
 import { History } from "./screens/History";
@@ -38,6 +39,7 @@ export default function App() {
 
   return (
     <div className="app">
+      <BackgroundArt />
       <main className="page">
         {tab === "home" && <Home go={go} openSettings={() => setSettings(true)} />}
         {tab === "apnea" && <Apnea key={table ?? "menu"} initialTable={table} onConsumed={() => setTable(undefined)} />}
