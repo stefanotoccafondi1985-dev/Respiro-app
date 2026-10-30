@@ -173,10 +173,10 @@ td.hold { color: var(--hold); font-weight: 600; }
 /* --- immagini decorative negli angoli --- */
 .bgart { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
 .bgart svg { position: absolute; height: auto; opacity: 0.5; animation: bob 11s ease-in-out infinite; }
-.bgart .tl { bottom: calc(80px + clamp(104px, 30vw, 160px) * 0.87); left: 6px; width: clamp(84px, 24vw, 120px); }
-.bgart .tr { bottom: calc(76px + clamp(66px, 19vw, 104px) * 1.69); right: 6px; width: clamp(64px, 19vw, 100px); animation-delay: -4s; }
-.bgart .bl { bottom: 70px; left: 4px; width: clamp(104px, 30vw, 160px); animation-delay: -7s; }
-.bgart .br { bottom: 66px; right: 6px; width: clamp(66px, 19vw, 104px); animation: none; }
+.bgart .tl { bottom: calc(80px + clamp(66px, 19vw, 104px) * 1.69); left: 38%; width: clamp(84px, 24vw, 120px); }
+.bgart .tr { bottom: calc(80px + clamp(66px, 19vw, 104px) * 1.69); right: 6%; width: clamp(64px, 19vw, 100px); animation-delay: -4s; }
+.bgart .bl { bottom: 70px; left: 52%; width: clamp(104px, 30vw, 160px); animation-delay: -7s; }
+.bgart .br { bottom: 66px; left: 8%; width: clamp(66px, 19vw, 104px); animation: none; }
 @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 .app { position: relative; }
 /* niente z-index qui: altrimenti il menu in basso finisce sopra le sessioni a schermo intero */
