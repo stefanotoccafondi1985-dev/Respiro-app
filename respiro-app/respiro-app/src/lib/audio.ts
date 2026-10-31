@@ -19,6 +19,32 @@ export function initAudio() {
 /** Contesto audio condiviso (null se il browser non lo supporta o prima del primo tocco). */
 export const getCtx = () => ctx;
 
+let out: { ctx: AudioContext; node: AudioNode } | null = null;
+
+/**
+ * Uscita comune di tutti i suoni: un limitatore morbido che impedisce ai picchi
+ * (gong o campana sopra al sottofondo) di superare il massimo e "gracchiare".
+ */
+export function getOut(c: AudioContext): AudioNode {
+  if (out && out.ctx === c) return out.node;
+  try {
+    const comp = c.createDynamicsCompressor();
+    comp.threshold.value = -14;
+    comp.knee.value = 12;
+    comp.ratio.value = 14;
+    comp.attack.value = 0.004;
+    comp.release.value = 0.3;
+    const trim = c.createGain();
+    trim.gain.value = 0.9;
+    comp.connect(trim);
+    trim.connect(c.destination);
+    out = { ctx: c, node: comp };
+  } catch {
+    out = { ctx: c, node: c.destination };
+  }
+  return out.node;
+}
+
 /** Tono sinusoidale generato al volo: nessun file audio necessario. */
 export function beep(freq: number, dur = 0.15) {
   const { sound, volume } = getState().settings;
@@ -33,7 +59,7 @@ export function beep(freq: number, dur = 0.15) {
     g.gain.exponentialRampToValueAtTime(peak, ctx.currentTime + 0.01);
     g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
     o.connect(g);
-    g.connect(ctx.destination);
+    g.connect(getOut(ctx));
     o.start();
     o.stop(ctx.currentTime + dur + 0.02);
   } catch {

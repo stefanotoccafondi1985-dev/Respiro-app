@@ -1,5 +1,5 @@
 import { getState } from "../store";
-import { getCtx } from "./audio";
+import { getCtx, getOut } from "./audio";
 
 /**
  * Suoni del coach generati al volo con Web Audio: nessun file da scaricare, nessun
@@ -15,7 +15,7 @@ export function gong() {
     const now = ctx.currentTime;
     const master = ctx.createGain();
     master.gain.value = Math.max(0.05, 0.9 * volume);
-    master.connect(ctx.destination);
+    master.connect(getOut(ctx));
     // [rapporto, ampiezza, durata della coda in secondi]
     const partials: [number, number, number][] = [
       [1, 1, 6],
@@ -129,7 +129,7 @@ export function startMusic(kind: MusicKind, volume: number) {
     muted = false;
     const gain = ctx.createGain();
     gain.gain.value = 0.0001;
-    gain.connect(ctx.destination);
+    gain.connect(getOut(ctx));
     const stops: (() => void)[] = [];
 
     if (kind === "brown") {
@@ -254,7 +254,7 @@ export function bowl() {
     const now = ctx.currentTime;
     const master = ctx.createGain();
     master.gain.value = Math.max(0.05, 0.8 * volume);
-    master.connect(ctx.destination);
+    master.connect(getOut(ctx));
     // [rapporto, ampiezza, durata della coda in secondi]
     const partials: [number, number, number][] = [
       [1, 1, 11],
@@ -299,7 +299,7 @@ export function thump() {
     g.gain.exponentialRampToValueAtTime(Math.max(0.05, 0.6 * volume), now + 0.02);
     g.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
     o.connect(g);
-    g.connect(ctx.destination);
+    g.connect(getOut(ctx));
     o.start(now);
     o.stop(now + 0.5);
   } catch {
